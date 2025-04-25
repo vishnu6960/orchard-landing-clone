@@ -1,9 +1,12 @@
 
-import { Menu } from "lucide-react";
+import { Menu, LogIn, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
+  const { user } = useAuth();
+
   return (
     <nav className="fixed top-0 w-full bg-purple-900/90 backdrop-blur-md z-50">
       <div className="max-w-[1200px] mx-auto">
@@ -25,6 +28,18 @@ const Navigation = () => {
             <Link to="/join" className="text-white hover:text-white/80">
               Join Us
             </Link>
+            
+            {user ? (
+              <Link to="/profile" className="text-white hover:text-white/80 flex items-center">
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </Link>
+            ) : (
+              <Link to="/auth" className="text-white hover:text-white/80 flex items-center">
+                <LogIn className="mr-2 h-4 w-4" />
+                Login
+              </Link>
+            )}
           </div>
 
           <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-white/80">
