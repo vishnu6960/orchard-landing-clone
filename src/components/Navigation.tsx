@@ -18,7 +18,7 @@ const Navigation = () => {
       <div className="max-w-[1200px] mx-auto">
         <div className="flex items-center justify-between h-16 px-4">
           <Link to="/" className="text-white font-semibold text-xl">
-            Student Tribe
+            Campus Hydras
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
