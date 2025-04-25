@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
+import EventRegistrationForm from "@/components/EventRegistrationForm";
 
 type Event = {
   id: string;
@@ -27,6 +27,8 @@ type Event = {
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isRegistrationFormOpen, setIsRegistrationFormOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
@@ -83,22 +85,13 @@ const Events = () => {
     }
   };
 
-  const handleRegisterForEvent = async (eventId: string) => {
+  const handleRegisterForEvent = (eventId: string) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-
-    const { error } = await supabase.from('event_registrations').insert({
-      event_id: eventId,
-      user_id: user.id
-    });
-
-    if (error) {
-      toast.error("Failed to register", { description: error.message });
-    } else {
-      toast.success("Successfully registered for the event!");
-    }
+    setSelectedEventId(eventId);
+    setIsRegistrationFormOpen(true);
   };
 
   return (
@@ -194,6 +187,14 @@ const Events = () => {
         )}
       </div>
       <Footer />
+      
+      {selectedEventId && (
+        <EventRegistrationForm 
+          eventId={selectedEventId}
+          isOpen={isRegistrationFormOpen}
+          onOpenChange={setIsRegistrationFormOpen}
+        />
+      )}
     </div>
   );
 };
