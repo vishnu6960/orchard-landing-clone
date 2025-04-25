@@ -1,333 +1,316 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
-const webinarSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
-  instructor: z.string().min(3, "Instructor name must be at least 3 characters"),
-  duration: z.string().min(2, "Duration is required"),
-  level: z.enum(["Beginner", "Intermediate", "Advanced"]),
-  zoom_link: z.string().url("Must be a valid URL"),
-  meeting_id: z.string().min(3, "Meeting ID is required"),
-  meeting_password: z.string().optional(),
-  start_time: z.string().min(1, "Start time is required"),
-  is_public: z.boolean().default(true),
-});
-
-type WebinarFormValues = z.infer<typeof webinarSchema>;
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { useMutation } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const AdminCreateWebinar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    instructor: "",
+    duration: "",
+    level: "", 
+    start_time: "",
+    zoom_link: "",
+    meeting_id: "",
+    meeting_password: "",
+    is_public: false
+  });
 
   // Check if user is admin
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useQuery({
-    queryKey: ['isAdmin', user?.id],
-    queryFn: async () => {
-      if (!user) return false;
-      const { data, error } = await supabase
-        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
-      
-      if (error) {
-        console.error("Error checking admin role:", error);
-        return false;
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        navigate("/auth");
+        return;
       }
-      
-      return data || false;
-    },
-    enabled: !!user,
-  });
 
-  // Form setup
-  const form = useForm<WebinarFormValues>({
-    resolver: zodResolver(webinarSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      instructor: "",
-      duration: "1 hour",
-      level: "Beginner",
-      zoom_link: "",
-      meeting_id: "",
-      meeting_password: "",
-      start_time: "",
-      is_public: true,
-    },
-  });
+      try {
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .single();
 
-  // Create webinar mutation
-  const createWebinarMutation = useMutation({
-    mutationFn: async (values: WebinarFormValues) => {
+        if (error || !data) {
+          // Not an admin
+          navigate("/");
+          toast.error("You don't have permission to access this page");
+          return;
+        }
+
+        setIsAdmin(true);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+        navigate("/");
+      }
+    };
+
+    checkAdminStatus();
+  }, [user, navigate]);
+
+  const { mutate: createWebinar, isPending } = useMutation({
+    mutationFn: async () => {
       if (!user) throw new Error("User not authenticated");
       
+      // Validate required fields
+      const requiredFields = ["title", "description", "instructor", "duration", "level", "start_time", "zoom_link", "meeting_id"];
+      for (const field of requiredFields) {
+        if (!formData[field as keyof typeof formData]) {
+          throw new Error(`${field.replace("_", " ")} is required`);
+        }
+      }
+      
+      // Create webinar
       const { data, error } = await supabase
-        .from('webinars')
-        .insert([{
-          ...values,
+        .from("webinars")
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          instructor: formData.instructor,
+          duration: formData.duration,
+          level: formData.level,
+          start_time: formData.start_time,
+          zoom_link: formData.zoom_link,
+          meeting_id: formData.meeting_id,
+          meeting_password: formData.meeting_password || null,
           created_by: user.id,
-        }]);
-        
+          is_public: formData.is_public
+        })
+        .select();
+
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      toast.success("Webinar created successfully!");
+      toast.success("Webinar created successfully");
       navigate("/webinars");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Failed to create webinar: ${error.message}`);
-    },
+    }
   });
 
-  const onSubmit = (values: WebinarFormValues) => {
-    createWebinarMutation.mutate(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createWebinar();
   };
 
-  // Redirect if not admin
-  useEffect(() => {
-    if (!isCheckingAdmin && !isAdmin) {
-      toast.error("You do not have permission to access this page");
-      navigate("/");
-    }
-  }, [isAdmin, isCheckingAdmin, navigate]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-  if (isCheckingAdmin) {
+  const handleSwitchChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, is_public: checked }));
+  };
+
+  const handleSelectChange = (value: string, name: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <div className="pt-32 px-4 max-w-[800px] mx-auto">
-          <p className="text-center">Checking permissions...</p>
-        </div>
-        <Footer />
+      <div className="container py-24">
+        <p>Checking permissions...</p>
       </div>
     );
   }
 
   if (!isAdmin) {
-    return null; // Will redirect in useEffect
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      <div className="pt-32 px-4 max-w-[800px] mx-auto pb-16">
-        <h1 className="text-3xl font-bold mb-6">Create New Webinar</h1>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Webinar Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter webinar title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Describe the webinar content and what participants will learn"
-                      className="min-h-[100px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
+    <div className="container py-24">
+      <h1 className="text-3xl font-bold mb-8">Create New Webinar</h1>
+
+      <form onSubmit={handleSubmit}>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Webinar Details</CardTitle>
+            <CardDescription>
+              Enter the details for the new webinar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Introduction to React"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Learn the basics of React..."
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="instructor">Instructor</Label>
+              <Input
+                id="instructor"
                 name="instructor"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Instructor Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Instructor name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Duration</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. 1 hour, 45 minutes" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.instructor}
+                onChange={handleChange}
+                placeholder="Jane Smith"
+                required
               />
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="level"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Experience Level</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a level" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  placeholder="1 hour"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="level">Experience Level</Label>
+                <Select 
+                  value={formData.level}
+                  onValueChange={(value) => handleSelectChange(value, "level")}
+                  required
+                >
+                  <SelectTrigger id="level">
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="start_time">Start Time</Label>
+              <Input
+                id="start_time"
                 name="start_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Time</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                type="datetime-local"
+                value={formData.start_time}
+                onChange={handleChange}
+                required
               />
             </div>
-            
-            <FormField
-              control={form.control}
-              name="zoom_link"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Zoom Meeting Link</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://zoom.us/j/..." {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the full Zoom meeting URL
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
+
+            <div className="space-y-2">
+              <Label htmlFor="is_public">Public Webinar</Label>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="is_public"
+                  checked={formData.is_public} 
+                  onCheckedChange={handleSwitchChange} 
+                />
+                <Label htmlFor="is_public">
+                  {formData.is_public ? "Visible to all users" : "Private webinar"}
+                </Label>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Zoom Meeting Details</CardTitle>
+            <CardDescription>
+              Enter the Zoom meeting information for this webinar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="zoom_link">Zoom Meeting Link</Label>
+              <Input
+                id="zoom_link"
+                name="zoom_link"
+                value={formData.zoom_link}
+                onChange={handleChange}
+                placeholder="https://zoom.us/j/123456789"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="meeting_id">Meeting ID</Label>
+              <Input
+                id="meeting_id"
                 name="meeting_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meeting ID</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Zoom Meeting ID" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.meeting_id}
+                onChange={handleChange}
+                placeholder="123 456 7890"
+                required
               />
-              
-              <FormField
-                control={form.control}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="meeting_password">Meeting Password (Optional)</Label>
+              <Input
+                id="meeting_password"
                 name="meeting_password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meeting Password (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Zoom Meeting Password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                value={formData.meeting_password}
+                onChange={handleChange}
+                placeholder="password123"
               />
             </div>
-            
-            <FormField
-              control={form.control}
-              name="is_public"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2 space-y-0">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="h-4 w-4"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">
-                    Make this webinar public (visible to all users)
-                  </FormLabel>
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex justify-end space-x-4">
-              <Button type="button" variant="outline" onClick={() => navigate("/webinars")}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={createWebinarMutation.isPending}>
-                {createWebinarMutation.isPending ? "Creating..." : "Create Webinar"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-      <Footer />
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" disabled={isPending} className="ml-auto">
+              {isPending ? "Creating..." : "Create Webinar"}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
     </div>
   );
 };
