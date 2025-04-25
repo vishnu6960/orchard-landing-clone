@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -193,9 +192,13 @@ const Webinars = () => {
             </Button>
             
             {isAdmin && (
-              <Button onClick={() => navigate("/admin/webinars/create")}>
+              <Button 
+                variant="default" 
+                onClick={() => navigate("/admin/webinars/create")}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
                 <Plus className="mr-2 h-4 w-4" />
-                Create Webinar
+                Add Webinar
               </Button>
             )}
           </div>
