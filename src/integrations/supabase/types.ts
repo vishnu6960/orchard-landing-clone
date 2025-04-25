@@ -104,15 +104,119 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      webinar_registrations: {
+        Row: {
+          id: string
+          registered_at: string
+          reminder_sent: boolean
+          user_id: string
+          webinar_id: string
+        }
+        Insert: {
+          id?: string
+          registered_at?: string
+          reminder_sent?: boolean
+          user_id: string
+          webinar_id: string
+        }
+        Update: {
+          id?: string
+          registered_at?: string
+          reminder_sent?: boolean
+          user_id?: string
+          webinar_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webinar_registrations_webinar_id_fkey"
+            columns: ["webinar_id"]
+            isOneToOne: false
+            referencedRelation: "webinars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webinars: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          duration: string
+          id: string
+          instructor: string
+          is_public: boolean | null
+          level: string
+          meeting_id: string
+          meeting_password: string | null
+          start_time: string
+          title: string
+          zoom_link: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          duration: string
+          id?: string
+          instructor: string
+          is_public?: boolean | null
+          level: string
+          meeting_id: string
+          meeting_password?: string | null
+          start_time: string
+          title: string
+          zoom_link: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          duration?: string
+          id?: string
+          instructor?: string
+          is_public?: boolean | null
+          level?: string
+          meeting_id?: string
+          meeting_password?: string | null
+          start_time?: string
+          title?: string
+          zoom_link?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -227,6 +331,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
