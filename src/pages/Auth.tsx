@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast as sonnerToast } from "sonner";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,8 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // For signup, we'll use a more direct approach and display clear feedback
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -31,24 +33,37 @@ const Auth = () => {
             },
           },
         });
+        
         if (error) throw error;
-        toast({
-          title: "Success!",
-          description: "Please check your email to confirm your account.",
-        });
+        
+        if (data?.user) {
+          sonnerToast.success("Account created", {
+            description: "Check your email to confirm your account",
+            duration: 5000
+          });
+          
+          // If the user was created but needs to confirm email, we'll stay on the page
+          // but switch to login view
+          setIsSignUp(false);
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        // For sign in
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+        
         if (error) throw error;
+        
+        sonnerToast.success("Signed in successfully");
         navigate("/");
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error.message,
+        title: "Authentication Error",
+        description: error.message || "Failed to authenticate. Please try again.",
       });
     } finally {
       setIsLoading(false);
