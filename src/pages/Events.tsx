@@ -1,17 +1,15 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import EventRegistrationForm from "@/components/EventRegistrationForm";
+import CreateEventForm from "@/components/CreateEventForm";
+import EventCard from "@/components/EventCard";
 
 type Event = {
   id: string;
@@ -29,13 +27,6 @@ const Events = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isRegistrationFormOpen, setIsRegistrationFormOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    description: '',
-    location: '',
-    start_time: '',
-    end_time: ''
-  });
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -56,35 +47,6 @@ const Events = () => {
     }
   };
 
-  const handleCreateEvent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!user) {
-      toast.error("Please log in to create an event");
-      return;
-    }
-
-    const { data, error } = await supabase.from('events').insert({
-      ...newEvent,
-      created_by: user.id
-    });
-
-    if (error) {
-      toast.error("Failed to create event", { description: error.message });
-    } else {
-      toast.success("Event created successfully!");
-      setIsCreateDialogOpen(false);
-      fetchEvents();
-      setNewEvent({
-        title: '',
-        description: '',
-        location: '',
-        start_time: '',
-        end_time: ''
-      });
-    }
-  };
-
   const handleRegisterForEvent = (eventId: string) => {
     if (!user) {
       navigate('/auth');
@@ -101,60 +63,7 @@ const Events = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">Upcoming Events</h1>
           {user && (
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>Create Event</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create a New Event</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleCreateEvent} className="space-y-4">
-                  <div>
-                    <Label>Title</Label>
-                    <Input 
-                      value={newEvent.title} 
-                      onChange={(e) => setNewEvent({...newEvent, title: e.target.value})} 
-                      required 
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Textarea 
-                      value={newEvent.description} 
-                      onChange={(e) => setNewEvent({...newEvent, description: e.target.value})} 
-                    />
-                  </div>
-                  <div>
-                    <Label>Location</Label>
-                    <Input 
-                      value={newEvent.location} 
-                      onChange={(e) => setNewEvent({...newEvent, location: e.target.value})} 
-                      required 
-                    />
-                  </div>
-                  <div>
-                    <Label>Start Time</Label>
-                    <Input 
-                      type="datetime-local" 
-                      value={newEvent.start_time} 
-                      onChange={(e) => setNewEvent({...newEvent, start_time: e.target.value})} 
-                      required 
-                    />
-                  </div>
-                  <div>
-                    <Label>End Time</Label>
-                    <Input 
-                      type="datetime-local" 
-                      value={newEvent.end_time} 
-                      onChange={(e) => setNewEvent({...newEvent, end_time: e.target.value})} 
-                      required 
-                    />
-                  </div>
-                  <Button type="submit">Create Event</Button>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => setIsCreateDialogOpen(true)}>Create Event</Button>
           )}
         </div>
         
@@ -163,30 +72,25 @@ const Events = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {events.map((event) => (
-              <Card key={event.id}>
-                <CardHeader>
-                  <CardTitle>{event.title}</CardTitle>
-                  <CardDescription>{event.location}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-4">{event.description}</p>
-                  <div className="text-sm text-gray-600 mb-4">
-                    <p>Start: {new Date(event.start_time).toLocaleString()}</p>
-                    <p>End: {new Date(event.end_time).toLocaleString()}</p>
-                  </div>
-                  <Button 
-                    onClick={() => handleRegisterForEvent(event.id)}
-                    className="w-full"
-                  >
-                    Register
-                  </Button>
-                </CardContent>
-              </Card>
+              <EventCard
+                key={event.id}
+                {...event}
+                onRegister={handleRegisterForEvent}
+              />
             ))}
           </div>
         )}
       </div>
       <Footer />
+      
+      {user && (
+        <CreateEventForm
+          isOpen={isCreateDialogOpen}
+          onOpenChange={setIsCreateDialogOpen}
+          onEventCreated={fetchEvents}
+          userId={user.id}
+        />
+      )}
       
       {selectedEventId && (
         <EventRegistrationForm 
