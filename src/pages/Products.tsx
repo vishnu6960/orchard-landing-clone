@@ -5,78 +5,78 @@ import MyNavbar from '../components/MyNavbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 
-// Sample product data
+// Sample product data with better images
 const allProducts = [
   {
     id: 1,
-    title: "Laptop",
-    description: "High performance laptop with the latest processor and ample storage",
-    price: 999.99,
-    image: "https://via.placeholder.com/300",
+    title: "MacBook Pro M2",
+    description: "Ultra-fast laptop with the latest M2 chip and stunning Retina display",
+    price: 1499.99,
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 2,
-    title: "Smartphone",
-    description: "Latest smartphone with amazing camera and long battery life",
-    price: 699.99,
-    image: "https://via.placeholder.com/300",
+    title: "iPhone 15 Pro",
+    description: "Latest smartphone with breakthrough camera system and all-day battery life",
+    price: 999.99,
+    image: "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 3,
-    title: "Headphones",
-    description: "Noise cancelling headphones with superior sound quality",
-    price: 149.99,
-    image: "https://via.placeholder.com/300",
+    title: "Noise-Cancelling Headphones",
+    description: "Premium wireless headphones with industry-leading noise cancellation",
+    price: 349.99,
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop",
     category: "Audio"
   },
   {
     id: 4,
-    title: "Smartwatch",
-    description: "Track your fitness and stay connected with this smartwatch",
+    title: "Smart Fitness Watch",
+    description: "Track your health metrics and stay connected with this advanced wearable",
     price: 249.99,
-    image: "https://via.placeholder.com/300",
+    image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&h=400&fit=crop",
     category: "Wearables"
   },
   {
     id: 5,
-    title: "Camera",
-    description: "Professional grade camera for stunning photography",
+    title: "Professional DSLR Camera",
+    description: "Capture stunning photos and videos with this professional grade camera",
     price: 1299.99,
-    image: "https://via.placeholder.com/300",
+    image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&h=400&fit=crop",
     category: "Photography"
   },
   {
     id: 6,
-    title: "Tablet",
-    description: "Portable tablet for work and entertainment on the go",
-    price: 399.99,
-    image: "https://via.placeholder.com/300",
+    title: "iPad Air",
+    description: "Ultra-thin tablet perfect for work, creativity, and entertainment on the go",
+    price: 599.99,
+    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 7,
-    title: "Desktop Computer",
-    description: "Powerful desktop computer for gaming and professional work",
-    price: 1499.99,
-    image: "https://via.placeholder.com/300",
+    title: "Gaming Desktop PC",
+    description: "High-performance desktop computer for gaming and professional work",
+    price: 1799.99,
+    image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 8,
     title: "Wireless Earbuds",
-    description: "Compact wireless earbuds with amazing sound quality",
-    price: 129.99,
-    image: "https://via.placeholder.com/300",
+    description: "Compact wireless earbuds with exceptional sound quality and comfort",
+    price: 179.99,
+    image: "https://images.unsplash.com/photo-1590658602232-4bda0d0eeb89?w=600&h=400&fit=crop",
     category: "Audio"
   },
   {
     id: 9,
-    title: "Smart Speaker",
-    description: "Voice controlled smart speaker for your home",
-    price: 99.99,
-    image: "https://via.placeholder.com/300",
+    title: "Smart Home Speaker",
+    description: "Voice-controlled smart speaker with premium sound for your home",
+    price: 129.99,
+    image: "https://images.unsplash.com/photo-1589003077984-894e133dabab?w=600&h=400&fit=crop",
     category: "Audio"
   }
 ];

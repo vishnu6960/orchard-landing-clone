@@ -18,7 +18,12 @@ const NotFound = () => {
             The page you are looking for might have been removed, had its name changed,
             or is temporarily unavailable.
           </p>
-          <Button as={Link} to="/" variant="primary" size="lg">
+          {/* Fixed by removing the 'as' prop and using regular component composition */}
+          <Button 
+            variant="primary" 
+            size="lg"
+            onClick={() => window.location.href = '/'}
+          >
             Go to Homepage
           </Button>
         </Container>

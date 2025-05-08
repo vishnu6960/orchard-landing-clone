@@ -5,54 +5,54 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { useState } from 'react';
 
-// Sample product data
+// Sample product data with improved images
 const sampleProducts = [
   {
     id: 1,
-    title: "Laptop",
-    description: "High performance laptop with the latest processor and ample storage",
-    price: 999.99,
-    image: "https://via.placeholder.com/300",
+    title: "MacBook Pro M2",
+    description: "Ultra-fast laptop with the latest M2 chip and stunning Retina display",
+    price: 1499.99,
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 2,
-    title: "Smartphone",
-    description: "Latest smartphone with amazing camera and long battery life",
-    price: 699.99,
-    image: "https://via.placeholder.com/300",
+    title: "iPhone 15 Pro",
+    description: "The most advanced iPhone yet with revolutionary camera system",
+    price: 999.99,
+    image: "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=600&h=400&fit=crop",
     category: "Electronics"
   },
   {
     id: 3,
-    title: "Headphones",
-    description: "Noise cancelling headphones with superior sound quality",
-    price: 149.99,
-    image: "https://via.placeholder.com/300",
+    title: "Noise-Cancelling Headphones",
+    description: "Premium wireless headphones with industry-leading noise cancellation",
+    price: 349.99,
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop",
     category: "Audio"
   },
   {
     id: 4,
-    title: "Smartwatch",
-    description: "Track your fitness and stay connected with this smartwatch",
+    title: "Smart Fitness Watch",
+    description: "Track your health and stay connected with this advanced wearable",
     price: 249.99,
-    image: "https://via.placeholder.com/300",
+    image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&h=400&fit=crop",
     category: "Wearables"
   },
   {
     id: 5,
-    title: "Camera",
-    description: "Professional grade camera for stunning photography",
+    title: "Professional DSLR Camera",
+    description: "Capture stunning photos and videos with this professional grade camera",
     price: 1299.99,
-    image: "https://via.placeholder.com/300",
+    image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&h=400&fit=crop",
     category: "Photography"
   },
   {
     id: 6,
-    title: "Tablet",
-    description: "Portable tablet for work and entertainment on the go",
-    price: 399.99,
-    image: "https://via.placeholder.com/300",
+    title: "iPad Air",
+    description: "Ultra-thin tablet perfect for work, creativity, and entertainment on the go",
+    price: 599.99,
+    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&h=400&fit=crop",
     category: "Electronics"
   }
 ];
@@ -66,44 +66,44 @@ const Home = () => {
       
       {/* Main content with top margin to account for the fixed navbar */}
       <div style={{ paddingTop: '56px' }}>
-        {/* Carousel */}
-        <Carousel>
+        {/* Carousel with high-quality images */}
+        <Carousel fade>
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="https://via.placeholder.com/1200x400"
-              alt="First slide"
-              style={{ maxHeight: '400px', objectFit: 'cover' }}
+              src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80"
+              alt="Tech showcase"
+              style={{ height: '500px', objectFit: 'cover' }}
             />
-            <Carousel.Caption>
-              <h3>Welcome to My Shop</h3>
-              <p>Discover amazing products at great prices</p>
+            <Carousel.Caption className="text-center bg-dark bg-opacity-50 rounded p-3">
+              <h3>Welcome to Tech Haven</h3>
+              <p>Discover amazing products at competitive prices</p>
               <Button variant="primary" className="mb-3">Shop Now</Button>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="https://via.placeholder.com/1200x400"
-              alt="Second slide"
-              style={{ maxHeight: '400px', objectFit: 'cover' }}
+              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
+              alt="Remote work setup"
+              style={{ height: '500px', objectFit: 'cover' }}
             />
-            <Carousel.Caption>
-              <h3>New Arrivals</h3>
-              <p>Check out our latest products</p>
-              <Button variant="primary" className="mb-3">View New Arrivals</Button>
+            <Carousel.Caption className="text-center bg-dark bg-opacity-50 rounded p-3">
+              <h3>Productivity Essentials</h3>
+              <p>Gear up for remote work and learning</p>
+              <Button variant="primary" className="mb-3">View Collection</Button>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="https://via.placeholder.com/1200x400"
-              alt="Third slide"
-              style={{ maxHeight: '400px', objectFit: 'cover' }}
+              src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1200&q=80"
+              alt="Premium tech"
+              style={{ height: '500px', objectFit: 'cover' }}
             />
-            <Carousel.Caption>
-              <h3>Special Offers</h3>
-              <p>Limited time deals you don't want to miss</p>
+            <Carousel.Caption className="text-center bg-dark bg-opacity-50 rounded p-3">
+              <h3>Premium Tech Deals</h3>
+              <p>Special offers on our premium collection</p>
               <Button variant="primary" className="mb-3">See Offers</Button>
             </Carousel.Caption>
           </Carousel.Item>
@@ -119,6 +119,9 @@ const Home = () => {
               </Col>
             ))}
           </Row>
+          <div className="text-center mt-4">
+            <Button variant="outline-primary" href="/products">View All Products</Button>
+          </div>
         </Container>
 
         {/* Call to Action */}
