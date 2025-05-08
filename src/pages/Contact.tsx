@@ -1,8 +1,8 @@
 
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
+import { useState } from 'react';
 import MyNavbar from '../components/MyNavbar';
 import Footer from '../components/Footer';
-import { useState } from 'react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const Contact = () => {
     message: ''
   });
   const [validated, setValidated] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,8 +43,12 @@ const Contact = () => {
       message: ''
     });
     setValidated(false);
+    setSubmitSuccess(true);
     
-    alert('Thank you for your message! We will get back to you soon.');
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      setSubmitSuccess(false);
+    }, 5000);
   };
 
   return (
@@ -54,6 +59,17 @@ const Contact = () => {
       <div style={{ paddingTop: '76px' }}>
         <Container className="py-5">
           <h1 className="text-center mb-5">Contact Us</h1>
+          
+          {submitSuccess && (
+            <Alert 
+              variant="success" 
+              dismissible 
+              onClose={() => setSubmitSuccess(false)}
+              className="mb-4"
+            >
+              Thank you for your message! We will get back to you soon.
+            </Alert>
+          )}
           
           <Row>
             <Col md={6} className="mb-4 mb-md-0">
