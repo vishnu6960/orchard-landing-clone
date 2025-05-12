@@ -1,0 +1,33 @@
+
+.not-found-page {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-content {
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.not-found-img {
+  max-height: 400px;
+  width: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .not-found-img {
+    max-height: 250px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  p {
+    font-size: 1rem;
+  }
+}
