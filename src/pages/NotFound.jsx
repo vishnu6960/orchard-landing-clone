@@ -7,11 +7,11 @@ const NotFound = () => {
     <div className="not-found-page">
       <div className="image-container">
         <div className="creative-overlay">
-          <div className="glitch-container">
-            <div className="glitch" data-text="404">404</div>
+          <div className="error-content">
+            <h1 className="error-title">404</h1>
+            <h2 className="error-subtitle">Page Not Found</h2>
+            <p className="error-message">The page you're looking for doesn't exist or has been moved.</p>
           </div>
-          <h1 className="error-title">Page Not Found</h1>
-          <p className="error-message">The page you're looking for has drifted into the digital void.</p>
         </div>
       </div>
     </div>
