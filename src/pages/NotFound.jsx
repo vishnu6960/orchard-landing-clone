@@ -1,26 +1,35 @@
 
-import { Container, Button } from 'react-bootstrap';
+import { Container, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './NotFound.css';
 
 const NotFound = () => {
   return (
     <div className="not-found-page">
-      <Container className="py-5 d-flex flex-column justify-content-center align-items-center text-center min-vh-100">
-        <div className="not-found-content">
-          <img 
-            src="https://www.imarkinfotech.com/wp-content/uploads/2017/10/404-Page-Cover.png" 
-            alt="404 Page Not Found" 
-            className="img-fluid mb-4 not-found-img"
-          />
-          <h1 className="display-4 fw-bold mb-3">Oops! 404 - Page Not Found</h1>
-          <p className="lead mb-4">The Page you are looking for doesn't exist</p>
-          <Link to="/">
-            <Button variant="primary" size="lg" className="px-4 py-2">
-              Back to Homepage
-            </Button>
-          </Link>
-        </div>
+      <Container fluid className="py-5">
+        <Row className="justify-content-center align-items-center min-vh-100">
+          <Col xs={12} md={8} lg={6} className="text-center">
+            <div className="not-found-content">
+              <div className="image-container mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                  alt="404 Page Not Found" 
+                  className="not-found-img img-fluid rounded shadow-lg"
+                />
+                <div className="overlay">
+                  <h2 className="error-code">404</h2>
+                </div>
+              </div>
+              <h1 className="display-4 fw-bold mb-3 text-primary">Oops! Page Not Found</h1>
+              <p className="lead mb-4 text-muted">We couldn't find the page you're looking for. It might have been moved or doesn't exist.</p>
+              <Link to="/">
+                <Button variant="primary" size="lg" className="px-4 py-2 shadow-sm">
+                  Back to Homepage
+                </Button>
+              </Link>
+            </div>
+          </Col>
+        </Row>
       </Container>
     </div>
   );
