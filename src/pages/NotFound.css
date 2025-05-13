@@ -3,42 +3,31 @@
   position: relative;
   height: calc(100vh - 140px); /* Adjust based on header/footer height */
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-}
-
-.image-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+  background-image: url('https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
   background-size: cover;
   background-position: center;
 }
 
-.creative-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
+.content-container {
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
+  max-width: 500px;
+  padding: 2rem;
+  z-index: 10;
 }
 
 .error-content {
   text-align: center;
-  max-width: 600px;
+  background: rgba(0, 0, 0, 0.7);
   padding: 2rem;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(4px);
 }
 
 .error-title {
-  font-size: 6rem;
+  font-size: 4rem;
   font-weight: 700;
   color: #ffffff;
   margin: 0;
@@ -46,20 +35,35 @@
 
 .error-subtitle {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #ffffff;
   margin: 0.5rem 0;
 }
 
 .error-message {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
-  margin: 1rem 0 0;
+  margin: 1rem 0 1.5rem;
+}
+
+.home-link {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.home-link:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 @media (max-width: 768px) {
   .error-title {
-    font-size: 4rem;
+    font-size: 3rem;
   }
   
   .error-subtitle {
@@ -72,8 +76,16 @@
 }
 
 @media (max-width: 480px) {
+  .content-container {
+    padding: 1rem;
+  }
+  
+  .error-content {
+    padding: 1.5rem;
+  }
+  
   .error-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
   
   .error-subtitle {
