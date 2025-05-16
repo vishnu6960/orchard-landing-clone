@@ -1,10 +1,104 @@
 
 import React from 'react';
+import { Calendar } from 'lucide-react';
 
-const WebinarCard = () => {
+interface WebinarCardProps {
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  image: string;
+  speaker: string;
+}
+
+const WebinarCard = ({
+  title = "Advanced React Patterns Workshop",
+  description = "Learn the most advanced React patterns and techniques used by top developers. This workshop will cover hooks, context API, and performance optimization.",
+  date = "May 24, 2025",
+  time = "1:00 PM EST",
+  image = "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&h=400&fit=crop",
+  speaker = "Sarah Johnson"
+}: Partial<WebinarCardProps>) => {
   return (
-    <div>
-      {/* Empty WebinarCard component */}
+    <div className="card shadow border-0 h-100 position-relative overflow-hidden" 
+      style={{ transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.transform = 'translateY(-5px)';
+        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.08)';
+      }}>
+      
+      {/* Card Image with Date Overlay */}
+      <div className="position-relative">
+        <img 
+          src={image} 
+          className="card-img-top" 
+          alt={title}
+          style={{ height: '200px', objectFit: 'cover' }}
+        />
+        
+        {/* Date Badge */}
+        <div 
+          className="position-absolute d-flex flex-column align-items-center justify-content-center bg-primary text-white rounded p-2"
+          style={{ 
+            top: '15px', 
+            right: '15px', 
+            width: '70px', 
+            height: '70px',
+            background: 'linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%)'
+          }}
+        >
+          <Calendar size={20} className="mb-1" />
+          <div className="text-center">
+            <span className="fw-bold">{date.split(' ')[1]}</span>
+            <div className="small">{date.split(' ')[0]}</div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Card Body */}
+      <div className="card-body d-flex flex-column">
+        <h5 className="card-title fw-bold mb-2">{title}</h5>
+        <p className="card-text text-muted mb-3 flex-grow-1">
+          {description.length > 100 ? `${description.substring(0, 100)}...` : description}
+        </p>
+        
+        {/* Time and Speaker */}
+        <div className="d-flex justify-content-between align-items-center text-muted small mb-3">
+          <span>
+            <i className="bi bi-clock me-2"></i>
+            {time}
+          </span>
+          <span>
+            <i className="bi bi-person me-2"></i>
+            {speaker}
+          </span>
+        </div>
+        
+        {/* Register Button */}
+        <button 
+          className="btn w-100" 
+          style={{ 
+            backgroundColor: '#9b87f5', 
+            color: 'white',
+            borderRadius: '6px',
+            fontWeight: '500',
+            padding: '10px',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#7E69AB';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = '#9b87f5';
+          }}
+        >
+          Register Now
+        </button>
+      </div>
     </div>
   );
 };
