@@ -38,11 +38,14 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="d-flex flex-column min-vh-100">
+      <div className="d-flex flex-column min-vh-100" style={{
+        background: "linear-gradient(135deg, #1A1F2C 0%, #2d3748 100%)",
+        color: "#ffffff"
+      }}>
         <main className="flex-grow-1">
           <div className="container py-5">
-            <h1 className="text-center mb-4">Upcoming Webinars</h1>
-            <p className="text-center text-muted mb-5">Join our expert-led sessions to enhance your skills and stay ahead in your field</p>
+            <h1 className="text-center mb-4" style={{ color: "#9b87f5" }}>Upcoming Webinars</h1>
+            <p className="text-center mb-5" style={{ color: "#e2e8f0" }}>Join our expert-led sessions to enhance your skills and stay ahead in your field</p>
             
             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
               {webinars.map((webinar) => (
