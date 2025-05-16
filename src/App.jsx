@@ -1,6 +1,6 @@
 
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NotFound from "./pages/NotFound";
 import Footer from "./components/Footer";
 
 const App = () => {
@@ -8,9 +8,10 @@ const App = () => {
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
         <main className="flex-grow-1">
-          <Routes>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="container py-5 text-center">
+            <h1>Welcome to My App</h1>
+            <p>This is a fresh start for your application.</p>
+          </div>
         </main>
         <Footer />
       </div>
