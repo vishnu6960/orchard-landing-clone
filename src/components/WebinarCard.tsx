@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card, Badge } from 'react-bootstrap';
 
 interface WebinarProps {
   _id: string;
